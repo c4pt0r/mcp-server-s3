@@ -16,6 +16,16 @@ s3_client = boto3.client(
 # Initialize FastMCP server
 app = FastMCP("s3")
 
+@app.tool(name="list_buckets", description="List all buckets")
+async def list_buckets(context: Context) -> Any:
+    try:
+        # List all buckets
+        response = s3_client.list_buckets()
+        buckets = [bucket['Name'] for bucket in response['Buckets']]
+        return {"buckets": buckets}
+    except Exception as e:
+        return {"error": str(e)}
+
 @app.tool(name="list_bucket", description="List objects in a bucket")
 async def list_bucket(context: Context, bucket_name: str, key_prefix: str = ""):
     try:
